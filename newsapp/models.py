@@ -7,3 +7,7 @@ class Data(models.Model):
     Content = models.TextField()
     URL = models.URLField(max_length=2000)
 
+class rate(models.Model):
+    rating=models.IntegerField()
+    articleId=models.IntegerField()
+    userId=models.IntegerField()

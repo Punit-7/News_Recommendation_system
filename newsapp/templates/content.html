@@ -13,7 +13,23 @@
 </head>
 
 <body>
-<h1>{{ obj.Content }}</h1>
+<h1>{{ obj.Content}}</h1>
+{% if user.is_authenticated %}
+    <form action="getRating" method="post">
+        {% csrf_token%}
+        <label>Rating</label>
+        <div>
+            <input type="number" name="rating">
+            <input type="number" name="articleId"  value="{{obj.id}}" hidden>
+            <input type="number" name="userId"  value="{{ user.id }}" hidden>
+            <input type="submit">
+        </div>
+
+    </form>
+
+{% else %}
+<p>Please LogIn to give rating.</p>
+{% endif %}
 
 </body>
 </html>
