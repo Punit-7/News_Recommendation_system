@@ -27,9 +27,18 @@
 
     </form>
 
+    <form action="recommend">
+        {% csrf_token%}
+        <input type="submit" value="Recommend">
+        {% for i in r %}
+        <p>{{ i }}</p>
+        {% endfor %}
+    </form>
+
 {% else %}
 <p>Please LogIn to give rating.</p>
 {% endif %}
+
 
 </body>
 </html>
