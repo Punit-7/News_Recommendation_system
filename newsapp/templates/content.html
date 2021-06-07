@@ -27,8 +27,9 @@
 
     </form>
 
-    <form action="recommend">
+    <form action="recommend" method="post">
         {% csrf_token%}
+        <input type="number" name="user"  value="{{ user.id }}" hidden>
         <input type="submit" value="Recommend">
         {% for i in r %}
         <p>{{ i }}</p>
