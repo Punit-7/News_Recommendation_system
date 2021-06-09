@@ -259,6 +259,9 @@ def recommend(request):
     return render(request,'a.html',context)
 
 def search(request):
+
+    if request.method == 'POST':
+        s = request.POST['search']
     # -*- coding: utf-8 -*-
     """Content_Based
 
@@ -288,57 +291,51 @@ def search(request):
     # nltk.download('punkt')
     # nltk.download('all')
 
-    news_articles = pd.read_csv('C:/Users/Admin/PycharmProjects/sabudhProject/project-main/news_articles.csv')
+    df = pd.read_csv('news_articles.csv')
 
-    news_articles = news_articles.drop('URL', axis=1)
-    news_articles = news_articles.dropna(axis=0)
-    news_articles = news_articles.reset_index(drop=True)
+    df = df.drop('URL', axis=1)
+    df = df.dropna(axis=0)
+    df = df.reset_index(drop=True)
 
-    news_articles.head(10)
+    df.head(10)
 
-    news_articles['article'] = news_articles['Title'].astype(str) + ' ' + news_articles['Content'].astype(str)
+    df['article'] = df['Title'].astype(str) + ' ' + df['Content'].astype(str)
 
     # tokenize articles to sentences
-    news_articles['article'] = news_articles['article'].apply(lambda x: nltk.sent_tokenize(x))
+    df['article'] = df['article'].apply(lambda x: nltk.sent_tokenize(x))
 
     # tokenize articles sentences to words
-    news_articles['article'] = news_articles['article'].apply(lambda x: [nltk.word_tokenize(sent) for sent in x])
+    df['article'] = df['article'].apply(lambda x: [nltk.word_tokenize(sent) for sent in x])
 
     # lower case
-    news_articles['article'] = news_articles['article'].apply(lambda x: [[wrd.lower() for wrd in sent] for sent in x])
+    df['article'] = df['article'].apply(lambda x: [[wrd.lower() for wrd in sent] for sent in x])
 
     # White spaces removal
-    news_articles['article'] = news_articles['article'].apply(
-        lambda x: [[wrd.strip() for wrd in sent if wrd != ' '] for sent in x])
+    df['article'] = df['article'].apply(lambda x: [[wrd.strip() for wrd in sent if wrd != ' '] for sent in x])
 
     # remove stop words
     stopwrds = set(stopwords.words('english'))
-    news_articles['article'] = news_articles['article'].apply(
-        lambda x: [[wrd for wrd in sent if not wrd in stopwrds] for sent in x])
+    df['article'] = df['article'].apply(lambda x: [[wrd for wrd in sent if not wrd in stopwrds] for sent in x])
 
     # remove punctuation words
     table = str.maketrans('', '', string.punctuation)
-    news_articles['article'] = news_articles['article'].apply(
-        lambda x: [[wrd.translate(table) for wrd in sent] for sent in x])
+    df['article'] = df['article'].apply(lambda x: [[wrd.translate(table) for wrd in sent] for sent in x])
 
     # remove not alphabetic characters
-    news_articles['article'] = news_articles['article'].apply(
-        lambda x: [[wrd for wrd in sent if wrd.isalpha()] for sent in x])
+    df['article'] = df['article'].apply(lambda x: [[wrd for wrd in sent if wrd.isalpha()] for sent in x])
 
     # lemmatizing article
     lemmatizer = WordNetLemmatizer()
-    news_articles['article'] = news_articles['article'].apply(
-        lambda x: [[lemmatizer.lemmatize(wrd.strip()) for wrd in sent] for sent in x])
+    df['article'] = df['article'].apply(lambda x: [[lemmatizer.lemmatize(wrd.strip()) for wrd in sent] for sent in x])
 
     # remove single characters
-    news_articles['article'] = news_articles['article'].apply(
-        lambda x: [[wrd for wrd in sent if len(wrd) > 2] for sent in x])
+    df['article'] = df['article'].apply(lambda x: [[wrd for wrd in sent if len(wrd) > 2] for sent in x])
 
-    news_articles['article'] = news_articles['article'].apply(lambda x: [' '.join(wrd) for wrd in x])
-    news_articles['article'] = news_articles['article'].apply(lambda x: ' '.join(x))
+    df['article'] = df['article'].apply(lambda x: [' '.join(wrd) for wrd in x])
+    df['article'] = df['article'].apply(lambda x: ' '.join(x))
 
     tfidf_vectorizer = TfidfVectorizer(use_idf=True)
-    tfidf_article = tfidf_vectorizer.fit_transform(news_articles['article'])
+    tfidf_article = tfidf_vectorizer.fit_transform(df['article'])
 
     """**Cosine Similarity**"""
 
@@ -347,17 +344,17 @@ def search(request):
     # Compute the cosine similarity matrix
     cosine_sim = linear_kernel(tfidf_article, tfidf_article)
 
-    sum_of_squared_dist = []
-    K = range(1, 15)
-    for k in K:
-        knn = KMeans(n_clusters=k, init='k-means++')
-        knn.fit(cosine_sim)
-        sum_of_squared_dist.append(knn.inertia_)
-
-    plt.plot(K, sum_of_squared_dist, 'bx-')
-    plt.xlabel('k')
-    plt.ylabel('Sum_of_squared_distances')
-    plt.title('Elbow Method For Optimal k')
+    # sum_of_squared_dist = []
+    # K = range(1,15)
+    # for k in K:
+    #   knn=KMeans(n_clusters=k,init='k-means++')
+    #   knn.fit(cosine_sim)
+    #   sum_of_squared_dist.append(knn.inertia_)
+    #
+    # plt.plot(K, sum_of_squared_dist, 'bx-')
+    # plt.xlabel('k')
+    # plt.ylabel('Sum_of_squared_distances')
+    # plt.title('Elbow Method For Optimal k')
     # plt.show()
 
     knn = KMeans(n_clusters=3, init='k-means++', max_iter=100, n_init=1)
@@ -375,9 +372,9 @@ def search(request):
 
         news_indices = [i[0] for i in sim_scores]
 
-        return news_articles['Title'].iloc[news_indices]
+        return df['Title'].iloc[news_indices]
 
-    indices = pd.Series(news_articles.index, index=news_articles['Title']).drop_duplicates()
+    indices = pd.Series(df.index, index=df['Title']).drop_duplicates()
 
     get_recommendations('US  South Korea begin joint military drill amid nuclear threat from North Korea')
 
@@ -386,33 +383,37 @@ def search(request):
     tfidf_pca_comp = tfidf_pca.fit_transform(tfidf_article.toarray())
 
     """**Clusters**"""
-
-    sum_of_squared_dist = []
-    K = range(1, 15)
-    for k in K:
-        knn = KMeans(n_clusters=k, init='k-means++')
-        knn.fit(tfidf_pca_comp)
-        sum_of_squared_dist.append(knn.inertia_)
-    plt.plot(K, sum_of_squared_dist, 'bx-')
-    plt.xlabel('k')
-    plt.ylabel('Sum_of_squared_distances')
-    plt.title('Elbow Method For Optimal k')
+    #
+    # sum_of_squared_dist = []
+    # K = range(1,15)
+    # for k in K:
+    #   knn=KMeans(n_clusters=k,init='k-means++')
+    #   knn.fit(tfidf_pca_comp)
+    #   sum_of_squared_dist.append(knn.inertia_)
+    # plt.plot(K, sum_of_squared_dist, 'bx-')
+    # plt.xlabel('k')
+    # plt.ylabel('Sum_of_squared_distances')
+    # plt.title('Elbow Method For Optimal k')
     # plt.show()
-
+    import pickle
     k_means = KMeans(n_clusters=3)
     k_means.fit(tfidf_pca_comp)
-    pred = k_means.predict(tfidf_pca_comp)
+    knnPickle = open('kmeans_file', 'wb')
+    pickle.dump(k_means, knnPickle)
+    loaded_model = pickle.load(open('kmeans_file', 'rb'))
+    pred = loaded_model.predict(tfidf_pca_comp)
     plt.figure(figsize=(15, 15))
     plt.scatter(tfidf_pca_comp[:, 0], tfidf_pca_comp[:, 1], c=pred)
     # plt.show()
 
-    news_articles['tfidf'] = tfidf_article
-    news_articles['tfidf_clusters'] = pred
-    news_articles.head()
+    # Use the loaded pickled model to make predictions
+    df['tfidf'] = tfidf_article
+    df['tfidf_clusters'] = pred
+    df.head()
 
-    news_articles.tfidf_clusters.value_counts()
+    df.tfidf_clusters.value_counts()
 
-    top_tf_df = pd.DataFrame(tfidf_article.todense()).groupby(news_articles['tfidf_clusters']).mean()
+    top_tf_df = pd.DataFrame(tfidf_article.todense()).groupby(df['tfidf_clusters']).mean()
 
     for i, r in top_tf_df.iterrows():
         print('\nCluster {}'.format(i))
@@ -462,14 +463,14 @@ def search(request):
         return file_clean_k
 
     vocab = set()
-    for doc in news_articles['article']:
+    for doc in df['article']:
         vocab.update(doc.split(" "))
 
     vocab = list(vocab)
     tfidf = TfidfVectorizer(vocabulary=vocab)
 
-    t1 = tfidf.fit(news_articles.article)
-    tfidf_tran = tfidf.transform(news_articles.article)
+    t1 = tfidf.fit(df.article)
+    tfidf_tran = tfidf.transform(df.article)
 
     def gen_vector_T(tokens):
         Q = np.zeros((len(vocab)))
@@ -506,15 +507,13 @@ def search(request):
         a = pd.DataFrame()
         for i, index in enumerate(out):
             a.loc[i, 'index'] = str(index)
-            a.loc[i, 'article'] = news_articles['article'][index]
+            a.loc[i, 'article'] = df['article'][index]
         for j, simScore in enumerate(d_cosines[-k:][::-1]):
             a.loc[j, 'Score'] = simScore
         return a
 
-    df1 = cosine_similarity_T(10, 'football injuries')
+    df1 = cosine_similarity_T(10, s)
 
     df = df1['article'].tolist()
-
-    # data = df.to_html()
 
     return render(request,'search.html',{'data':df})
