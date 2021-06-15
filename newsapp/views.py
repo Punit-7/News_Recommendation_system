@@ -21,6 +21,8 @@ def content(request,id):
     obj = get_object_or_404(Data,pk=id)
 
     return render(request,'content.html',{'obj': obj})
+
+
 def getRating(request):
     if request.method=='POST':
         rating=request.POST['rating']
@@ -29,7 +31,8 @@ def getRating(request):
     r=rate(rating=rating,articleId=articleId,userId=userId)
     r.save()
 
-    return redirect('/')
+    obj = get_object_or_404(Data,pk=articleId)
+    return render(request,'content.html',{'obj': obj})
 
 def recommend(request):
     if request.method == 'POST':
@@ -52,7 +55,7 @@ def recommend(request):
 
     def news_articles():
 
-        con = sqlite3.connect(r"C:\Users\Admin\PycharmProjects\sabudhProject\project-main\db.sqlite3")
+        con = sqlite3.connect(r"db.sqlite3")
         cur = con.cursor()
 
         df = pd.read_sql_query("SELECT * from newsapp_data", con)
@@ -62,19 +65,10 @@ def recommend(request):
         return df
 
     def ratingsdf():
-        print(a)
-        con = sqlite3.connect(r"C:\Users\Admin\PycharmProjects\sabudhProject\project-main\db.sqlite3")
+        print("User : " ,a)
+        con = sqlite3.connect(r"db.sqlite3")
         cur = con.cursor()
 
-
-        # SqlCommand("select Answer from Questions where QuestionNo = @no", cn);
-        # cmd.Parameters.AddWithValue("@no", no);
-
-        # # SqlCommand
-        # # cmd = new
-        # # SqlCommand("select Answer from Questions where QuestionNo = @no", cn);
-        # # cmd.Parameters.AddWithValue("@no", no);
-        # SqlCommand cmd
         df = pd.read_sql_query("SELECT * from newsapp_rate", con)
         df = pd.DataFrame(df, columns=['userId', 'articleId', 'rating'])
 
@@ -96,7 +90,6 @@ def recommend(request):
     # nltk.download('all')
 
     df = news_articles()
-
     df.head(10)
 
     len(df['id'])
@@ -209,7 +202,7 @@ def recommend(request):
 
     from sklearn.neighbors import NearestNeighbors
 
-    def find_similar_movies(news_id, X, k, metric='cosine', show_distance=False):
+    def find_similar_news(news_id, X, k, metric='cosine', show_distance=False):
 
         neighbour_ids = []
 
@@ -234,7 +227,7 @@ def recommend(request):
     news_id = user1['articleId'].tail(1).item()
     print(news_id)
 
-    similar_ids = find_similar_movies(news_id, X, k=10)
+    similar_ids = find_similar_news(news_id, X, k=12)
     news_title = news_titles[news_id]
 
     print(f"Because you read {news_title}")
@@ -248,13 +241,12 @@ def recommend(request):
     #
     # news_id = user1['articleId'].tail(1).item()
     # print(news_id)
-    # similar_ids = find_similar_movies(news_id, X, k=10, metric="euclidean")
+    # similar_ids = find_similar_news(news_id, X, k=10, metric="euclidean")
     #
     # news_title = news_titles[news_id]
     # print(f"Because you read {news_title}:")
     # for i in similar_ids:
     #     print(news_titles[i])
-
 
     return render(request,'a.html',context)
 
@@ -508,12 +500,13 @@ def search(request):
         for i, index in enumerate(out):
             a.loc[i, 'index'] = str(index)
             a.loc[i, 'article'] = df['article'][index]
+            a.loc[i, 'Title'] = df['Title'][index]
         for j, simScore in enumerate(d_cosines[-k:][::-1]):
             a.loc[j, 'Score'] = simScore
         return a
 
-    df1 = cosine_similarity_T(10, s)
+    df1 = cosine_similarity_T(12, s)
 
-    df = df1['article'].tolist()
+    df = df1['Title'].tolist()
 
     return render(request,'search.html',{'data':df})

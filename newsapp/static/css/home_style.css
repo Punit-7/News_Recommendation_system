@@ -105,3 +105,7 @@ ul.navbar-nav > li > a:focus {
 .navbar-header {
     position: relative;
 }
+
+.ht1 {
+    height: 270px;
+}

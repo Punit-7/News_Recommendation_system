@@ -37,6 +37,11 @@
                                 {% endif %}
 
                             </ul>
+                            <form action="search" method="post" style="position: absolute; top: 10px; right: 90px;">
+                            {% csrf_token%}
+                            <input type="text" name="search">
+                            <input type="submit" class="btn btn-light" value="Search">
+                            </form>
                         </div>
                     </div>
                 </div>
@@ -54,7 +59,7 @@
 
                     <div class="col-md-4 col-sm-4 wow fadeInLeft">
 
-                        <div class="about-item text-center">
+                        <div class="about-item text-center ht1" style="height: 270px">
                             <a href="{%url 'content' object2.id %}">
                                 <h3>{{object2.Title}}</h3>
                                 <hr>
@@ -64,7 +69,7 @@
                     </div>
                     <div class="col-md-4 col-sm-4 wow fadeInLeft">
 
-                        <div class="about-item text-center">
+                        <div class="about-item text-center ht1" style="height: 270px">
                             <a href="{%url 'content' object3.id %}">
                                 <h3>{{object3.Title}}</h3>
                                 <hr>
@@ -74,7 +79,7 @@
                     </div>
                     <div class="col-md-4 col-sm-4 wow fadeInLeft">
 
-                        <div class="about-item text-center">
+                        <div class="about-item text-center ht1" style="height: 270px">
 
                             <a href="{%url 'content' object4.id %}">
                                 <h3>{{object4.Title}}</h3>
@@ -86,7 +91,7 @@
                     </div>
                     <div class="col-md-4 col-sm-4 wow fadeInLeft">
 
-                        <div class="about-item text-center">
+                        <div class="about-item text-center ht1" style="height: 270px">
 
                             <a href="{%url 'content' object5.id %}">
                                 <h3>{{object5.Title}}</h3>
@@ -98,7 +103,7 @@
                     </div>
                     <div class="col-md-4 col-sm-4 wow fadeInLeft">
 
-                        <div class="about-item text-center">
+                        <div class="about-item text-center ht1" style="height: 270px">
 
                             <a href="{%url 'content' object6.id %}">
                                 <h3>{{object6.Title}}</h3>
@@ -110,7 +115,7 @@
                     </div>
                     <div class="col-md-4 col-sm-4 wow fadeInLeft">
 
-                        <div class="about-item text-center">
+                        <div class="about-item text-center ht1" style="height: 270px">
 
                             <a href="{%url 'content' object7.id %}">
                                 <h3>{{object7.Title}}</h3>
@@ -122,7 +127,7 @@
                     </div>
                     <div class="col-md-4 col-sm-4 wow fadeInLeft">
 
-                        <div class="about-item text-center">
+                        <div class="about-item text-center ht1" style="height: 270px">
 
                             <a href="{%url 'content' object8.id %}">
                                 <h3>{{object8.Title}}</h3>
@@ -134,7 +139,7 @@
                     </div>
                     <div class="col-md-4 col-sm-4 wow fadeInLeft">
 
-                        <div class="about-item text-center">
+                        <div class="about-item text-center ht1" style="height: 270px">
 
                             <a href="{%url 'content' object9.id %}">
                                 <h3>{{object9.Title}}</h3>
@@ -146,7 +151,7 @@
                     </div>
                     <div class="col-md-4 col-sm-4 wow fadeInLeft">
 
-                        <div class="about-item text-center">
+                        <div class="about-item text-center ht1" style="height: 270px">
 
                             <a href="{%url 'content' object10.id %}">
                                 <h3>{{object10.Title}}</h3>
@@ -158,7 +163,7 @@
                     </div>
                     <div class="col-md-4 col-sm-4 wow fadeInLeft">
 
-                        <div class="about-item text-center">
+                        <div class="about-item text-center ht1" style="height: 270px">
 
                             <a href="{%url 'content' object11.id %}">
                                 <h3>{{object11.Title}}</h3>
@@ -170,7 +175,7 @@
                     </div>
                     <div class="col-md-4 col-sm-4 wow fadeInLeft">
 
-                        <div class="about-item text-center">
+                        <div class="about-item text-center ht1" style="height: 270px">
 
                             <a href="{%url 'content' object12.id %}">
                                 <h3>{{object12.Title}}</h3>
@@ -182,7 +187,7 @@
                     </div>
                     <div class="col-md-4 col-sm-4 wow fadeInLeft">
 
-                        <div class="about-item text-center">
+                        <div class="about-item text-center ht1" style="height: 270px">
 
                             <a href="{%url 'content' object13.id %}">
                                 <h3>{{object13.Title}}</h3>
