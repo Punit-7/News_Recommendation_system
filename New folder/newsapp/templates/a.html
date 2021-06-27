@@ -51,27 +51,31 @@
 {#        {% for i in r %}#}
 {#        <p>{{ i }}</p>#}
 {#        {% endfor %}#}
-    <div id="about">
 
-        <div class="content-box-md">
+        <div id="about">
 
-            <div class="container">
+            <div class="content-box-md">
 
-                <div class="row">
-                    {% for i in r %}
+                <div class="container">
 
-                    <div class="col-md-4 col-sm-4 wow fadeInLeft">
+                    <div class="row">
+                        {% for i in ids %}
 
-                        <div class="about-item text-center" style="height: 270px">
-                                <p>{{ i }}</p>
+                        <div class="col-md-4 col-sm-4 wow fadeInLeft">
+
+                            <div class="about-item text-center" style="height: 270px">
+                                <a href="{%url 'content' i %}">
+                                    <p>{{ i }}</p>
+                                </a>
+
+                            </div>
                         </div>
-                    </div>
-                    {% endfor %}
+                        {% endfor %}
 
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
     </form>
 
 {% else %}

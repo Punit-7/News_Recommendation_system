@@ -247,10 +247,12 @@ def recommend(request):
 
     print(f"Because you read {news_title}")
     a = []
+    ids = []
     for i in similar_ids:
         a.append(news_titles[i])
+        ids.append(i)
 
-    context = {'news_titles':news_titles,'r':a}
+    context = {'news_titles':news_titles,'r':a,'ids':ids}
 
     # news_titles =  dict(zip(df['id'], df['Title']))
     #
