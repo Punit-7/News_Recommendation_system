@@ -1,0 +1,69 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+
+        <link rel="stylesheet"  href="{%  static  'css/bootstrap.min.css'  %}">
+        <link rel="stylesheet"  href="{%  static  'css/home_style.css'  %}">
+</head>
+
+<body>
+
+   <header>
+        <nav class="navbar navbar-fixed-top">
+            <div class="container-fluid">
+                <div class="site-nav-wrapper">
+                    <div class="navbar-header">
+                        <a href="#" class="navbar-brand smooth-scroll">
+
+                            News Recommendation System
+
+                        </a>
+                    </div>
+
+                    <div class="container">
+                        <div class="collapse navbar-collapse">
+                            <ul class="nav navbar-nav pull-right">
+                                {% if user.is_authenticated %}
+                                <li><a class="smooth-scroll" href="{% url 'logout'%}">LogOut</a></li>
+                                {% else %}
+                                <li><a class="smooth-scroll" href="{% url 'login'%}">LogIn</a></li>
+                                <li><a class="smooth-scroll" href="{% url 'register'%}">Register</a></li>
+                                {% endif %}
+
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </nav>
+   </header>
+<div id="about">
+
+        <div class="content-box-md">
+
+            <div class="container">
+
+                <div class="row">
+                    {% for i in data %}
+
+                    <div class="col-md-4 col-sm-4 wow fadeInLeft">
+
+                        <div class="about-item text-center" style="height: 270px">
+                                <p>{{ i }}</p>
+                        </div>
+                    </div>
+                    {% endfor %}
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
