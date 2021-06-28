@@ -32,7 +32,7 @@ def content(request,id):
     for i in range(len(obj1)):
         a.append(obj1[i].comment)
         # b.update(obj1[i].userId : obj1[i].comment)
-        b.__setitem__(obj1[i].comment , obj1[i].userId )
+        b.__setitem__(obj1[i].comment , obj1[i].userName)
     print(b)
     # return render(request, 'content.html', {'obj': obj})
     return render(request, 'content.html', {'obj': obj, 'b': b})
@@ -57,8 +57,8 @@ def addComment(request):
     if request.method=='POST':
         comment=request.POST['comment']
         articleId = request.POST['articleId']
-        userId = request.POST['userId']
-    c = comments(comment=comment,articleId=articleId,userId=userId)
+        userName = request.POST['userName']
+    c = comments(comment=comment,articleId=articleId,userName=userName)
     c.save()
 
     obj1 = comments.objects.all()
@@ -67,10 +67,11 @@ def addComment(request):
     obj = get_object_or_404(Data, pk=articleId)
     a = []
     b = {}
+
     for i in range(len(obj1)):
         a.append(obj1[i].comment)
         # b.update(obj1[i].userId : obj1[i].comment)
-        b.__setitem__(obj1[i].comment , obj1[i].userId )
+        b.__setitem__(obj1[i].comment , obj1[i].userName )
     print(b)
     # return render(request, 'content.html', {'obj': obj})
     return render(request, 'content.html', {'obj': obj, 'b': b})

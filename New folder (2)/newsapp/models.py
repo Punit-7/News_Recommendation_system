@@ -15,4 +15,4 @@ class rate(models.Model):
 class comments(models.Model):
     comment=models.TextField()
     articleId=models.IntegerField()
-    userId=models.IntegerField()
+    userName=models.CharField(default="", max_length=1000)
