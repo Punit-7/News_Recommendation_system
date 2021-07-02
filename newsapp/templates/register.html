@@ -27,7 +27,7 @@
             <div class="container-fluid">
                 <div class="site-nav-wrapper">
                     <div class="navbar-header">
-                        <a href="#" class="navbar-brand smooth-scroll">
+                        <a href="{% url 'home'%}" class="navbar-brand smooth-scroll">
 
                             News Recommendation System
 
@@ -38,6 +38,7 @@
                         <div class="collapse navbar-collapse">
                             <ul class="nav navbar-nav pull-right">
                                 {% if user.is_authenticated %}
+                                <li><a class="smooth-scroll">Welcome {{ user.username }}</a></li>
                                 <li><a class="smooth-scroll" href="{% url 'logout'%}">LogOut</a></li>
                                 {% else %}
                                 <li><a class="smooth-scroll" href="{% url 'login'%}">LogIn</a></li>

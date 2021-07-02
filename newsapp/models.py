@@ -11,3 +11,8 @@ class rate(models.Model):
     rating=models.IntegerField()
     articleId=models.IntegerField()
     userId=models.IntegerField()
+
+class comments(models.Model):
+    comment=models.TextField()
+    articleId=models.IntegerField()
+    userName=models.CharField(default="", max_length=1000)

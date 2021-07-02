@@ -1,6 +1,7 @@
 from django.shortcuts import render,get_object_or_404,redirect
-from .models import Data,rate
+from .models import Data,rate,comments
 import random
+from django.contrib import auth
 
 # Create your views here.
 
@@ -19,8 +20,26 @@ def home(request):
 def content(request,id):
 
     obj = get_object_or_404(Data,pk=id)
+    obj1 = comments.objects.all()
+    # # obj = get_object_or_404(Data, pk=articleId)
+    a = []
+    # for i in range(len(obj1)):
+    #     a.append(obj1[i].comment)
+    # print(a)
+    # return render(request, 'content.html', {'obj': obj, 'a': a})
 
-    return render(request,'content.html',{'obj': obj})
+    b = {}
+    for i in range(len(obj1)):
+        a.append(obj1[i].comment)
+        # b.update(obj1[i].userId : obj1[i].comment)
+        b.__setitem__(obj1[i].comment , obj1[i].userName)
+    print(b)
+    b = dict(reversed(list(b.items())))
+    # return render(request, 'content.html', {'obj': obj})
+    return render(request, 'content.html', {'obj': obj, 'b': b})
+
+    # return render(request,'content.html',{'obj': obj})
+
 
 
 def getRating(request):
@@ -31,8 +50,51 @@ def getRating(request):
     r=rate(rating=rating,articleId=articleId,userId=userId)
     r.save()
 
-    obj = get_object_or_404(Data,pk=articleId)
-    return render(request,'content.html',{'obj': obj})
+    obj = get_object_or_404(Data, pk=articleId)
+    obj1 = comments.objects.all()
+    # # obj = get_object_or_404(Data, pk=articleId)
+    a = []
+    # for i in range(len(obj1)):
+    #     a.append(obj1[i].comment)
+    # print(a)
+    # return render(request, 'content.html', {'obj': obj, 'a': a})
+
+    b = {}
+    for i in range(len(obj1)):
+        a.append(obj1[i].comment)
+        # b.update(obj1[i].userId : obj1[i].comment)
+        b.__setitem__(obj1[i].comment, obj1[i].userName)
+    print(b)
+    b = dict(reversed(list(b.items())))
+    # return render(request, 'content.html', {'obj': obj})
+    return render(request, 'content.html', {'obj': obj, 'b': b})
+    # obj = get_object_or_404(Data,pk=articleId)
+    # return render(request,'content.html',{'obj': obj})
+
+
+def addComment(request):
+    if request.method=='POST':
+        comment=request.POST['comment']
+        articleId = request.POST['articleId']
+        userName = request.POST['userName']
+    c = comments(comment=comment,articleId=articleId,userName=userName)
+    c.save()
+
+    obj1 = comments.objects.all()
+    # obj2 = auth.objects.all()
+    # print(obj2.id)
+    obj = get_object_or_404(Data, pk=articleId)
+    a = []
+    b = {}
+
+    for i in range(len(obj1)):
+        a.append(obj1[i].comment)
+        # b.update(obj1[i].userId : obj1[i].comment)
+        b.__setitem__(obj1[i].comment , obj1[i].userName )
+    print(b)
+    b = dict(reversed(list(b.items())))
+    # return render(request, 'content.html', {'obj': obj})
+    return render(request, 'content.html', {'obj': obj, 'b': b})
 
 def recommend(request):
     if request.method == 'POST':
@@ -232,10 +294,19 @@ def recommend(request):
 
     print(f"Because you read {news_title}")
     a = []
+    ids = []
     for i in similar_ids:
         a.append(news_titles[i])
+        ids.append(i)
 
-    context = {'news_titles':news_titles,'r':a}
+    res = {}
+    for key in ids:
+        for value in a:
+            res[key] = value
+            a.remove(value)
+            break
+
+    context = {'news_titles':news_titles,'r':a,'ids':ids,'res':res}
 
     # news_titles =  dict(zip(df['id'], df['Title']))
     #
@@ -462,7 +533,12 @@ def search(request):
     tfidf = TfidfVectorizer(vocabulary=vocab)
 
     t1 = tfidf.fit(df.article)
+    with open('t1.pk', 'wb') as fin:
+        pickle.dump(t1, fin)
     tfidf_tran = tfidf.transform(df.article)
+    with open('tfidf_tran.pk', 'wb') as fin:
+        pickle.dump(tfidf_tran, fin)
+    loaded_tfidf_tran = pickle.load(open('tfidf_tran.pk', 'rb'))
 
     def gen_vector_T(tokens):
         Q = np.zeros((len(vocab)))
@@ -490,7 +566,7 @@ def search(request):
         d_cosines = []
 
         query_vector = gen_vector_T(q_df['q_clean'])
-        for d in tfidf_tran.A:
+        for d in loaded_tfidf_tran.A:
             d_cosines.append(cosine_sim(query_vector, d))
 
         out = np.array(d_cosines).argsort()[-k:][::-1]
@@ -507,6 +583,13 @@ def search(request):
 
     df1 = cosine_similarity_T(12, s)
 
-    df = df1['Title'].tolist()
+    a = df1['Title'].tolist()
+    ids = df1['index'].tolist()
+    res = {}
+    for key in ids:
+        for value in a:
+            res[key] = value
+            a.remove(value)
+            break
 
-    return render(request,'search.html',{'data':df})
+    return render(request,'search.html',{'data':res})

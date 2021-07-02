@@ -19,7 +19,7 @@
             <div class="container-fluid">
                 <div class="site-nav-wrapper">
                     <div class="navbar-header">
-                        <a href="#" class="navbar-brand smooth-scroll">
+                        <a href="{% url 'home'%}" class="navbar-brand smooth-scroll">
 
                             News Recommendation System
 
@@ -30,6 +30,7 @@
                         <div class="collapse navbar-collapse">
                             <ul class="nav navbar-nav pull-right">
                                 {% if user.is_authenticated %}
+                                <li><a class="smooth-scroll">Welcome {{ user.username }}</a></li>
                                 <li><a class="smooth-scroll" href="{% url 'logout'%}">LogOut</a></li>
                                 {% else %}
                                 <li><a class="smooth-scroll" href="{% url 'login'%}">LogIn</a></li>
@@ -50,15 +51,21 @@
             <div class="container">
 
                 <div class="row">
-                    {% for i in data %}
+                    {% for i,j in data.items %}
 
-                    <div class="col-md-4 col-sm-4 wow fadeInLeft">
 
-                        <div class="about-item text-center" style="height: 270px">
-                                <p>{{ i }}</p>
+                        <div class="col-md-4 col-sm-4 wow fadeInLeft">
+
+                            <div class="about-item text-center" style="height: 270px">
+                                <a href="{%url 'content' i %}">
+                                    <p>{{ j }}</p>
+
+                                </a>
+
+                            </div>
                         </div>
-                    </div>
-                    {% endfor %}
+
+                        {% endfor %}
 
                 </div>
             </div>
